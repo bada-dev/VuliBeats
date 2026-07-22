@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#07070d">
+<title>VuliBeats — PC Uploader</title>
+<link rel="icon" href="/static/icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07070d; --a1:#8b5cf6; --a2:#22d3ee;
+  --grad:linear-gradient(135deg,var(--a1),var(--a2));
+  --txt:#f4f4fa; --txt2:#8e90a8; --txt3:#5c5e74;
+  --glass:rgba(255,255,255,.045); --edge:rgba(255,255,255,.075);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--txt);font-family:'Inter',system-ui,sans-serif;min-height:100vh}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+img{display:block}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:
+  radial-gradient(55vmax 55vmax at 8% -10%,rgba(139,92,246,.2),transparent 60%),
+  radial-gradient(45vmax 45vmax at 100% 110%,rgba(34,211,238,.13),transparent 60%)}
+body::after{content:'';position:fixed;inset:0;z-index:50;pointer-events:none;opacity:.045;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E")}
+.wrap{position:relative;z-index:1;max-width:980px;margin:0 auto;padding:34px 28px 80px}
+header{display:flex;align-items:center;gap:14px;margin-bottom:30px}
+.wordmark{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:27px;letter-spacing:-.02em}
+.wordmark b{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.subtag{font-size:12px;color:var(--txt3);border:1px solid var(--edge);border-radius:99px;padding:5px 12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.spacer{flex:1}
+.uchip{width:36px;height:36px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;box-shadow:0 4px 16px rgba(139,92,246,.4)}
+.who{font-size:13px;color:var(--txt2)}
+.cbtn{background:rgba(255,255,255,.06);border:1px solid var(--edge);color:var(--txt);font-size:12.5px;font-weight:600;border-radius:99px;padding:8px 16px;transition:.15s}
+.cbtn:hover{background:rgba(255,255,255,.1)}
+.cbtn.danger{color:#f87171;border-color:rgba(248,113,113,.3)}
+.cbtn.danger:hover{background:rgba(248,113,113,.08)}
+
+/* login */
+#gate{display:none;align-items:center;justify-content:center;min-height:70vh}
+#gate.on{display:flex}
+.gatecard{width:min(380px,100%);background:var(--glass);border:1px solid var(--edge);border-radius:24px;padding:38px 32px 30px;backdrop-filter:blur(24px);box-shadow:0 30px 80px rgba(0,0,0,.5)}
+.gatecard .wordmark{font-size:32px;text-align:center;display:block}
+.gatecard .tag{color:var(--txt2);font-size:13px;text-align:center;margin:8px 0 26px}
+.field input{width:100%;background:rgba(255,255,255,.055);border:1px solid var(--edge);border-radius:13px;color:var(--txt);padding:14px 16px;font-size:15px;outline:none;margin-bottom:12px;transition:border-color .2s}
+.field input:focus{border-color:var(--a1)}
+.field input::placeholder{color:var(--txt3)}
+.gbtn{width:100%;background:var(--grad);color:#fff;font-weight:700;font-size:15px;border-radius:13px;padding:14px;margin-top:4px;box-shadow:0 8px 28px rgba(139,92,246,.35);transition:transform .12s,opacity .2s}
+.gbtn:active{transform:scale(.98)}
+.gbtn[disabled]{opacity:.55}
+.gatemsg{font-size:12.5px;color:#f8a5a5;text-align:center;min-height:17px;margin-top:12px}
+.gatenote{font-size:11.5px;color:var(--txt3);text-align:center;margin-top:14px;line-height:1.6}
+
+#main{display:none}
+#main.on{display:block}
+
+/* dropzone */
+#drop{border:1.5px dashed rgba(255,255,255,.18);border-radius:22px;padding:52px 30px;text-align:center;cursor:pointer;
+  background:var(--glass);transition:.2s;position:relative;overflow:hidden}
+#drop:hover{border-color:rgba(139,92,246,.6)}
+#drop.over{border-color:var(--a2);background:rgba(139,92,246,.09);transform:scale(1.005)}
+#drop .orb{width:74px;height:74px;border-radius:50%;background:var(--grad);margin:0 auto 18px;display:flex;align-items:center;justify-content:center;box-shadow:0 16px 44px rgba(139,92,246,.45)}
+#drop b{font-family:'Space Grotesk',sans-serif;font-size:19px;font-weight:700;display:block}
+#drop p{font-size:13px;color:var(--txt2);margin-top:7px}
+#drop .btns{display:flex;gap:10px;justify-content:center;margin-top:20px}
+.pbtn{background:var(--grad);color:#fff;font-weight:700;font-size:13px;border-radius:99px;padding:11px 22px;box-shadow:0 6px 20px rgba(139,92,246,.35);transition:transform .12s}
+.pbtn:active{transform:scale(.96)}
+.pbtn.ghost{background:rgba(255,255,255,.07);border:1px solid var(--edge);box-shadow:none}
+
+/* upload queue */
+#queue{margin-top:18px;display:none}
+#queue.on{display:block}
+.qrow{display:flex;align-items:center;gap:14px;background:var(--glass);border:1px solid var(--edge);border-radius:14px;padding:11px 16px;margin-bottom:8px}
+.qrow .nm{flex:1;min-width:0;font-size:13.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qrow .sz{font-size:11.5px;color:var(--txt3);font-variant-numeric:tabular-nums;white-space:nowrap}
+.qrow .st{font-size:11.5px;font-weight:700;white-space:nowrap}
+.qrow .st.ok{color:#34d399}.qrow .st.err{color:#f87171}.qrow .st.dup{color:#fbbf24}
+.qbar{width:130px;height:5px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden;flex-shrink:0}
+.qbar i{display:block;height:100%;width:0;background:var(--grad);border-radius:3px;transition:width .12s}
+
+/* library */
+.libhead{display:flex;align-items:center;gap:12px;margin:38px 0 14px}
+.libhead h2{font-family:'Space Grotesk',sans-serif;font-size:19px;font-weight:700;letter-spacing:-.01em}
+.libhead .count{font-size:12.5px;color:var(--txt2)}
+table{width:100%;border-collapse:collapse}
+th{font-size:10.5px;color:var(--txt3);text-transform:uppercase;letter-spacing:.09em;font-weight:700;text-align:left;padding:8px 12px;border-bottom:1px solid var(--edge)}
+td{padding:9px 12px;font-size:13.5px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:middle}
+tr:hover td{background:rgba(255,255,255,.025)}
+td .t1{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:290px}
+td .t2{font-size:11.5px;color:var(--txt2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:290px}
+td img{width:40px;height:40px;border-radius:9px;object-fit:cover;background:#15151f}
+td.num{font-variant-numeric:tabular-nums;color:var(--txt2);font-size:12.5px;white-space:nowrap}
+.del{color:var(--txt3);padding:8px;border-radius:9px;transition:.15s}
+.del:hover{color:#f87171;background:rgba(248,113,113,.1)}
+.emptylib{text-align:center;color:var(--txt3);font-size:13.5px;padding:44px 0;line-height:1.7}
+
+/* phone strip */
+.strip{margin-top:34px;background:linear-gradient(135deg,rgba(139,92,246,.14),rgba(34,211,238,.09));border:1px solid rgba(139,92,246,.28);
+  border-radius:18px;padding:20px 24px;display:flex;gap:18px;align-items:center}
+.strip svg{flex-shrink:0}
+.strip b{font-family:'Space Grotesk',sans-serif}
+.strip p{font-size:13px;color:var(--txt2);line-height:1.65}
+.strip p b{color:var(--txt)}
+
+#toast{position:fixed;left:50%;bottom:30px;transform:translateX(-50%) translateY(16px);background:rgba(28,28,42,.95);border:1px solid var(--edge);
+  color:var(--txt);font-size:13.5px;font-weight:600;padding:12px 22px;border-radius:99px;opacity:0;transition:.25s;z-index:60;pointer-events:none;box-shadow:0 12px 34px rgba(0,0,0,.5)}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <span class="wordmark">Vuli<b>Beats</b></span>
+    <span class="subtag">PC Uploader</span>
+    <span class="spacer"></span>
+    <span class="who" id="who" hidden></span>
+    <div class="uchip" id="uchip" hidden>?</div>
+    <button class="cbtn" id="btnLogout" hidden>Log out</button>
+  </header>
+
+  <div id="gate">
+    <div class="gatecard">
+      <span class="wordmark">Vuli<b>Beats</b></span>
+      <div class="tag">Log in with the <b>same account</b> as your phone app.</div>
+      <div class="field"><input id="gUser" placeholder="Username" autocomplete="username" maxlength="32"></div>
+      <div class="field"><input id="gPass" placeholder="Password" type="password" autocomplete="current-password" maxlength="128"></div>
+      <button class="gbtn" id="gGo">Continue</button>
+      <div class="gatemsg" id="gMsg"></div>
+      <div class="gatenote">First time? Any new username + password creates the account.<br>Your phone and PC just need to match.</div>
+    </div>
+  </div>
+
+  <div id="main">
+    <div id="drop">
+      <div class="orb"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 16V4m0 0 5 5m-5-5L7 9"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg></div>
+      <b>Drop your music here</b>
+      <p>Any audio or video files — mp3, m4a, flac, opus, mp4, whatever you've got.</p>
+      <div class="btns">
+        <button class="pbtn" id="btnFiles">Choose files</button>
+        <button class="pbtn ghost" id="btnFolder">Add a whole folder</button>
+      </div>
+    </div>
+    <div id="queue"></div>
+
+    <div class="libhead">
+      <h2>On the server</h2><span class="count" id="libCount"></span>
+      <span class="spacer"></span>
+      <button class="cbtn" id="btnRefresh">Refresh</button>
+      <button class="cbtn danger" id="btnClear">Clear server</button>
+    </div>
+    <table id="libTable">
+      <thead><tr><th></th><th>Track</th><th>Album</th><th>Length</th><th>Size</th><th></th></tr></thead>
+      <tbody id="libBody"></tbody>
+    </table>
+    <div class="emptylib" id="emptyLib" hidden>Nothing on the server yet.<br>Drop some files above — they'll appear on your phone's Sync tab.</div>
+
+    <div class="strip">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="url(#sg)" stroke-width="1.6"><defs><linearGradient id="sg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8b5cf6"/><stop offset="1" stop-color="#22d3ee"/></linearGradient></defs><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/></svg>
+      <p><b>Next: grab your phone.</b> Open the VuliBeats app → <b>Sync</b> tab → <b>Sync now</b>. Everything you upload here downloads into the phone and plays offline forever. The server forgets files after a while — that's fine, your phone doesn't.</p>
+    </div>
+  </div>
+</div>
+<div id="toast"></div>
+<input type="file" id="fIn" multiple hidden>
+<input type="file" id="dIn" webkitdirectory hidden>
+
+<script>
+'use strict';
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmtSize = (b) => b > 1e9 ? (b/1e9).toFixed(1)+' GB' : b > 1e6 ? Math.round(b/1e6)+' MB' : Math.max(1,Math.round(b/1e3))+' KB';
+const fmtTime = (s) => { if (!isFinite(s) || s <= 0) return '—'; s = Math.round(s); return Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); };
+let toastT;
+function toast(m){ const el=$('#toast'); el.textContent=m; el.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(()=>el.classList.remove('on'),2600); }
+
+const Auth = {
+  get token(){ return localStorage.getItem('vb-token')||''; },
+  get user(){ return localStorage.getItem('vb-user')||''; },
+  set(t,u){ localStorage.setItem('vb-token',t); localStorage.setItem('vb-user',u); },
+  clear(){ localStorage.removeItem('vb-token'); localStorage.removeItem('vb-user'); },
+};
+function authedUi(){
+  const on = !!Auth.token;
+  $('#gate').classList.toggle('on', !on);
+  $('#main').classList.toggle('on', on);
+  $('#who').hidden = !on; $('#uchip').hidden = !on; $('#btnLogout').hidden = !on;
+  if (on){ $('#who').textContent = '@'+Auth.user; $('#uchip').textContent = (Auth.user[0]||'?').toUpperCase(); }
+}
+$('#gGo').addEventListener('click', doLogin);
+$('#gPass').addEventListener('keydown', e => { if (e.key==='Enter') doLogin(); });
+async function doLogin(){
+  const u=$('#gUser').value.trim(), p=$('#gPass').value, msg=$('#gMsg'), btn=$('#gGo');
+  if(!u||!p){ msg.textContent='Enter a username and a password.'; return; }
+  btn.disabled=true; msg.textContent='';
+  try{
+    const r = await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:u,password:p})});
+    const j = await r.json().catch(()=>({}));
+    if(!r.ok){ msg.textContent = j.error||'Login failed'; }
+    else { Auth.set(j.token, j.username); authedUi(); loadLib(); }
+  }catch{ msg.textContent = "Can't reach the server."; }
+  btn.disabled=false;
+}
+$('#btnLogout').addEventListener('click', ()=>{ Auth.clear(); authedUi(); });
+
+async function api(path, opts={}){
+  const r = await fetch(path,{...opts, headers:{'X-Token':Auth.token, ...(opts.headers||{})}});
+  if(r.status===401){ Auth.clear(); authedUi(); throw new Error('unauthorized'); }
+  return r;
+}
+
+/* ---------- server library ---------- */
+let lib = [];
+async function loadLib(){
+  try{
+    const r = await api('/api/manifest');
+    lib = (await r.json()).tracks || [];
+    renderLib();
+  }catch(e){ if(String(e.message)!=='unauthorized') toast('Could not load library'); }
+}
+function renderLib(){
+  const body = $('#libBody');
+  lib.sort((a,b)=> (b.at||0)-(a.at||0));
+  $('#libCount').textContent = lib.length ? `${lib.length} ${lib.length===1?'song':'songs'} · ${fmtSize(lib.reduce((a,t)=>a+(t.size||0),0))}` : '';
+  $('#emptyLib').hidden = !!lib.length;
+  $('#libTable').style.display = lib.length ? '' : 'none';
+  body.innerHTML = lib.map(t => `<tr>
+    <td style="width:52px">${t.hasArt ? `<img loading="lazy" src="/api/art/${t.id}?x=${t.id}" onerror="this.style.visibility='hidden'">` : `<img src="data:image/svg+xml,${encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><rect width='40' height='40' rx='9' fill='hsl(${(t.name||'').length*47%360} 45% 26%)'/><text x='20' y='26' font-size='17' text-anchor='middle' fill='rgba(255,255,255,.6)'>♪</text></svg>`)}">`}</td>
+    <td><div class="t1">${esc(t.title||t.name)}</div><div class="t2">${esc(t.artist||'Unknown artist')}</div></td>
+    <td class="num">${esc(t.album||'—')}</td>
+    <td class="num">${fmtTime(t.duration)}</td>
+    <td class="num">${fmtSize(t.size||0)}</td>
+    <td style="width:44px"><button class="del" data-del="${t.id}" title="Delete from server"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg></button></td>
+  </tr>`).join('');
+}
+$('#libBody').addEventListener('click', async (e)=>{
+  const b = e.target.closest('[data-del]');
+  if(!b) return;
+  await api('/api/file/'+b.dataset.del, {method:'DELETE'});
+  lib = lib.filter(t=>t.id!==b.dataset.del);
+  renderLib();
+  toast('Deleted from server');
+});
+$('#btnRefresh').addEventListener('click', loadLib);
+let clearArmed=false;
+$('#btnClear').addEventListener('click', async ()=>{
+  if(!clearArmed){ clearArmed=true; $('#btnClear').textContent='Click again to clear'; setTimeout(()=>{clearArmed=false;$('#btnClear').textContent='Clear server';},3500); return; }
+  clearArmed=false; $('#btnClear').textContent='Clear server';
+  await api('/api/clear',{method:'POST'});
+  lib=[]; renderLib();
+  toast('Server cleared — your phone keeps its copies');
+});
+
+/* ---------- uploads ---------- */
+// Auth token travels in a header, so uploads use XHR for real progress events.
+const AUDIO_HINT = /\.(mp3|m4a|aac|flac|wav|ogg|oga|opus|webm|mp4|m4b|wma|aiff?|ape|mka|mkv|mov|3gp|amr|mid|f\d{2,3})$/i;
+$('#btnFiles').addEventListener('click', ()=>$('#fIn').click());
+$('#btnFolder').addEventListener('click', ()=>$('#dIn').click());
+$('#drop').addEventListener('click', (e)=>{ if(!e.target.closest('button')) $('#fIn').click(); });
+$('#fIn').addEventListener('change', e=>{ enqueue([...e.target.files]); e.target.value=''; });
+$('#dIn').addEventListener('change', e=>{ enqueue([...e.target.files].filter(f=>AUDIO_HINT.test(f.name)||f.type.startsWith('audio')||f.type.startsWith('video'))); e.target.value=''; });
+['dragover','dragenter'].forEach(ev=>$('#drop').addEventListener(ev, e=>{ e.preventDefault(); $('#drop').classList.add('over'); }));
+['dragleave','drop'].forEach(ev=>$('#drop').addEventListener(ev, e=>{ e.preventDefault(); if(ev==='dragleave' && e.target!==$('#drop'))return; $('#drop').classList.remove('over'); }));
+$('#drop').addEventListener('drop', e=>{ enqueue([...e.dataTransfer.files]); });
+
+const q = [];
+let uploading = 0;
+function enqueue(files){
+  if(!files.length) return;
+  const have = new Set(lib.map(t=>t.name+'::'+t.size));
+  for(const f of files){
+    const dup = have.has(f.name+'::'+f.size);
+    const row = document.createElement('div');
+    row.className='qrow';
+    row.innerHTML = `<span class="nm">${esc(f.name)}</span><span class="sz">${fmtSize(f.size)}</span>
+      <div class="qbar"><i></i></div><span class="st">${dup?'already there':'waiting'}</span>`;
+    $('#queue').classList.add('on');
+    $('#queue').appendChild(row);
+    if(dup){ row.querySelector('.st').className='st dup'; continue; }
+    q.push({f, row});
+  }
+  pump();
+}
+function pump(){
+  while(uploading < 2 && q.length) uploadOne(q.shift());
+}
+function uploadOne({f, row}){
+  uploading++;
+  const st = row.querySelector('.st'), bar = row.querySelector('.qbar i');
+  st.textContent = 'uploading';
+  const xhr = new XMLHttpRequest();
+  xhr.open('POST','/api/upload');
+  xhr.setRequestHeader('X-Token', Auth.token);
+  xhr.upload.onprogress = (e)=>{ if(e.lengthComputable) bar.style.width = (e.loaded/e.total*100)+'%'; };
+  xhr.onload = ()=>{
+    uploading--;
+    if(xhr.status===200){
+      st.textContent='done'; st.className='st ok'; bar.style.width='100%';
+      try{ const t = JSON.parse(xhr.responseText).track; if(t){ lib = lib.filter(x=>x.id!==t.id); lib.push(t); renderLib(); } }catch{}
+    } else if(xhr.status===401){ st.textContent='logged out'; st.className='st err'; Auth.clear(); authedUi(); }
+    else { st.textContent='failed'; st.className='st err'; }
+    pump();
+    if(!uploading && !q.length) toast('All uploads finished — hit Sync on your phone 📱');
+  };
+  xhr.onerror = ()=>{ uploading--; st.textContent='failed'; st.className='st err'; pump(); };
+  const fd = new FormData();
+  fd.append('file', f, f.name);
+  xhr.send(fd);
+}
+
+/* mobile visitors get pointed the right way */
+if (/Android|iPhone|iPad/i.test(navigator.userAgent)) {
+  document.addEventListener('DOMContentLoaded', ()=>toast('Psst — this page is for your PC. On your phone, use the app itself.'));
+}
+
+authedUi();
+if (Auth.token) loadLib();
+window.PC = { enqueue, loadLib, Auth, get lib(){ return lib; } };
+</script>
+</body>
+</html>
