@@ -321,6 +321,53 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
 #importOv .bar{height:6px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden}
 #importOv .bar i{display:block;height:100%;width:0;background:var(--grad);border-radius:3px;transition:width .15s}
 #importOv .pct{font-size:12px;color:var(--txt2);margin-top:10px;font-variant-numeric:tabular-nums}
+
+/* ---------- PC uploader mode (same page, wide screens) ---------- */
+#pcMode{display:none}
+body.pc #app,body.pc #np,body.pc .sheet,body.pc #shade,body.pc #importOv{display:none!important}
+body.pc #pcMode{display:block;position:fixed;inset:0;overflow-y:auto;z-index:1}
+body.pc #toast{bottom:34px}
+.pcwrap{max-width:980px;margin:0 auto;padding:34px 28px 80px}
+.pchead{display:flex;align-items:center;gap:13px;margin-bottom:30px;flex-wrap:wrap}
+.subtag{font-size:11px;color:var(--txt3);border:1px solid var(--edge);border-radius:99px;padding:5px 12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.spacer{flex:1}
+.who{font-size:13px;color:var(--txt2)}
+#pcMode .cbtn:hover{background:rgba(255,255,255,.1)}
+#drop{border:1.5px dashed rgba(255,255,255,.18);border-radius:22px;padding:52px 30px;text-align:center;cursor:pointer;background:var(--glass);transition:.2s}
+#drop:hover{border-color:rgba(139,92,246,.6)}
+#drop.over{border-color:var(--a2);background:rgba(139,92,246,.09)}
+#drop .orb{width:74px;height:74px;border-radius:50%;background:var(--grad);margin:0 auto 18px;display:flex;align-items:center;justify-content:center;box-shadow:0 16px 44px rgba(139,92,246,.45)}
+#drop b{font-family:var(--disp);font-size:19px;font-weight:700;display:block}
+#drop p{font-size:13px;color:var(--txt2);margin-top:7px}
+#drop .btns{display:flex;gap:10px;justify-content:center;margin-top:20px}
+#pcMode .pbtn{font-size:13px;padding:11px 22px}
+#queue{margin-top:18px;display:none}
+#queue.on{display:block}
+.qrow{display:flex;align-items:center;gap:14px;background:var(--glass);border:1px solid var(--edge);border-radius:14px;padding:11px 16px;margin-bottom:8px}
+.qrow .nm{flex:1;min-width:0;font-size:13.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qrow .sz{font-size:11.5px;color:var(--txt3);font-variant-numeric:tabular-nums;white-space:nowrap}
+.qrow .st{font-size:11.5px;font-weight:700;white-space:nowrap}
+.qrow .st.ok{color:#34d399}.qrow .st.err{color:#f87171}.qrow .st.dup{color:#fbbf24}
+.qbar{width:130px;height:5px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden;flex-shrink:0}
+.qbar i{display:block;height:100%;width:0;background:var(--grad);border-radius:3px;transition:width .12s}
+.libhead{display:flex;align-items:center;gap:12px;margin:38px 0 14px}
+.libhead h2{font-family:var(--disp);font-size:19px;font-weight:700;letter-spacing:-.01em}
+.libhead .count{font-size:12.5px;color:var(--txt2)}
+#pcMode table{width:100%;border-collapse:collapse}
+#pcMode th{font-size:10.5px;color:var(--txt3);text-transform:uppercase;letter-spacing:.09em;font-weight:700;text-align:left;padding:8px 12px;border-bottom:1px solid var(--edge)}
+#pcMode td{padding:9px 12px;font-size:13.5px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:middle}
+#pcMode tr:hover td{background:rgba(255,255,255,.025)}
+#pcMode td .t1{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:290px}
+#pcMode td .t2{font-size:11.5px;color:var(--txt2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:290px}
+#pcMode td img{width:40px;height:40px;border-radius:9px;object-fit:cover;background:#15151f}
+#pcMode td.num{font-variant-numeric:tabular-nums;color:var(--txt2);font-size:12.5px;white-space:nowrap}
+.del{color:var(--txt3);padding:8px;border-radius:9px;transition:.15s}
+.del:hover{color:#f87171;background:rgba(248,113,113,.1)}
+.emptylib{text-align:center;color:var(--txt3);font-size:13.5px;padding:44px 0;line-height:1.7}
+.strip{margin-top:34px;background:linear-gradient(135deg,rgba(139,92,246,.14),rgba(34,211,238,.09));border:1px solid rgba(139,92,246,.28);border-radius:18px;padding:20px 24px;display:flex;gap:18px;align-items:center}
+.strip svg{flex-shrink:0}
+.strip p{font-size:13px;color:var(--txt2);line-height:1.65}
+.strip p b{color:var(--txt)}
 </style>
 </head>
 <body>
@@ -400,8 +447,11 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
         </div>
         <div class="card">
           <h4>Upload from your PC</h4>
-          <div class="sub">On your computer, open<br><b id="pcUrl" style="word-break:break-all">…/pc</b><br>and log in with the same username — drag your music in, then come back here and hit Sync.</div>
-          <div class="cardbtns"><button class="cbtn link" id="btnLogout">Log out</button></div>
+          <div class="sub">Open <b id="pcUrl" style="word-break:break-all">this same site</b> on your computer — it turns into the uploader there automatically. Same login, drag your music in, then hit Sync here.</div>
+          <div class="cardbtns">
+            <button class="cbtn" id="btnPcMode">Uploader mode on this device</button>
+            <button class="cbtn link" id="btnLogout">Log out</button>
+          </div>
         </div>
         <div class="hint">Synced music lives inside this app and plays with <b>no internet, forever</b>. The server is just the courier — it forgets files after a while, your phone doesn't.</div>
       </div>
@@ -423,6 +473,51 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
     <button data-v="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="11" cy="11" r="7"/><path d="m20.5 20.5-4-4"/></svg>Search</button>
     <button data-v="sync" id="tabSync"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M21 12a9 9 0 1 1-2.6-6.3M21 3v6h-6"/></svg>Sync<span class="ndot"></span></button>
   </nav>
+</div>
+
+<!-- PC UPLOADER MODE (same page — shows on wide screens / via the switch buttons) -->
+<div id="pcMode">
+  <div class="pcwrap">
+    <header class="pchead">
+      <span class="wordmark" style="font-size:27px">Vuli<b>Beats</b></span>
+      <span class="subtag">PC Uploader</span>
+      <span class="spacer"></span>
+      <span class="who" id="pcWho"></span>
+      <div class="uchip" id="pcChip" style="width:36px;height:36px">?</div>
+      <button class="cbtn" id="pcToPlayer">Switch to player</button>
+      <button class="cbtn" id="pcLogout">Log out</button>
+    </header>
+
+    <div id="drop">
+      <div class="orb"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 16V4m0 0 5 5m-5-5L7 9"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg></div>
+      <b>Drop your music here</b>
+      <p>Any audio or video files — mp3, m4a, flac, opus, mp4, whatever you've got.</p>
+      <div class="btns">
+        <button class="pbtn" id="btnFiles">Choose files</button>
+        <button class="pbtn ghost" id="btnFolder">Add a whole folder</button>
+      </div>
+    </div>
+    <div id="queue"></div>
+
+    <div class="libhead">
+      <h2>On the server</h2><span class="count" id="libCount"></span>
+      <span class="spacer"></span>
+      <button class="cbtn" id="btnRefresh">Refresh</button>
+      <button class="cbtn danger" id="btnClear">Clear server</button>
+    </div>
+    <table id="libTable">
+      <thead><tr><th></th><th>Track</th><th>Album</th><th>Length</th><th>Size</th><th></th></tr></thead>
+      <tbody id="libBody"></tbody>
+    </table>
+    <div class="emptylib" id="emptyLib" hidden>Nothing on the server yet.<br>Drop some files above — they'll appear on your phone's Sync tab.</div>
+
+    <div class="strip">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="url(#sg)" stroke-width="1.6"><defs><linearGradient id="sg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8b5cf6"/><stop offset="1" stop-color="#22d3ee"/></linearGradient></defs><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/></svg>
+      <p><b>Next: grab your phone.</b> Open this same site there (or the app) → <b>Sync</b> tab → <b>Sync now</b>. Everything you upload here downloads into the phone and plays offline forever. The server forgets files after a while — that's fine, your phone doesn't.</p>
+    </div>
+  </div>
+  <input type="file" id="fIn" multiple hidden>
+  <input type="file" id="dIn" webkitdirectory hidden>
 </div>
 
 <!-- NOW PLAYING -->
@@ -571,9 +666,7 @@ async function doLogin() {
       if (!r.ok) { msg.textContent = j.error || 'Login failed'; wob(); break; }
       Auth.set(j.token, j.username);
       hideGate();
-      $('#uchip').textContent = j.username[0].toUpperCase();
-      $('#userPill').textContent = '@' + j.username;
-      checkServer();
+      onAuthedRefresh();
       break;
     } catch {
       if (Date.now() - started > 95000) { msg.textContent = "Can't reach the server. Are you online?"; wob(); break; }
@@ -1775,14 +1868,10 @@ async function boot() {
   }
   $('#vol').value = S.vol * 100;
   $('#vol').style.setProperty('--p', (S.vol * 100) + '%');
-  $('#pcUrl').textContent = location.origin + '/pc';
+  $('#pcUrl').textContent = location.origin;
+  applyMode();
   renderHome(); renderSearch(); updateStoragePill(); updatePlayBtns(); updateShufLoopUi(); renderSyncPhone();
-  if (Auth.token) {
-    $('#uchip').textContent = (Auth.user[0] || '?').toUpperCase();
-    $('#userPill').textContent = '@' + Auth.user;
-    hideGate();
-    checkServer(true);
-  } else showGate();
+  if (Auth.token) { hideGate(); onAuthedRefresh(true); } else showGate();
   if (S.pos >= 0) loadTrack(S.queue[S.pos], { autoplay: false });
   scanDurations();
   if ('serviceWorker' in navigator && location.protocol !== 'file:') {
@@ -1791,8 +1880,133 @@ async function boot() {
 }
 boot();
 
+/* ---------------- PC uploader mode (same page, same account) ---------------- */
+let Mode = 'player';
+function detectMode() {
+  const ov = localStorage.getItem('vb-mode');
+  if (ov === 'pc' || ov === 'player') return ov;
+  const mobileUA = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+  return (!mobileUA && window.innerWidth >= 768) ? 'pc' : 'player';
+}
+function applyMode() {
+  Mode = detectMode();
+  document.body.classList.toggle('pc', Mode === 'pc');
+  if (Auth.token && Mode === 'pc') loadSrvLib();
+}
+window.addEventListener('resize', () => { if (!localStorage.getItem('vb-mode') && detectMode() !== Mode) applyMode(); });
+$('#pcToPlayer').addEventListener('click', () => { localStorage.setItem('vb-mode', 'player'); applyMode(); });
+$('#btnPcMode').addEventListener('click', () => { localStorage.setItem('vb-mode', 'pc'); applyMode(); });
+$('#pcLogout').addEventListener('click', () => { Auth.clear(); toast('Logged out'); showGate(); });
+
+function onAuthedRefresh(silent = false) {
+  const initial = (Auth.user[0] || '?').toUpperCase();
+  $('#uchip').textContent = initial;
+  $('#userPill').textContent = '@' + Auth.user;
+  $('#pcWho').textContent = '@' + Auth.user;
+  $('#pcChip').textContent = initial;
+  if (Mode === 'pc') loadSrvLib();
+  else checkServer(silent);
+}
+
+let srvLib = [];
+async function loadSrvLib() {
+  try {
+    const r = await api('/api/manifest');
+    srvLib = (await r.json()).tracks || [];
+    renderSrvLib();
+  } catch (e) { if (String(e.message) !== 'unauthorized') toast('Could not load the server library'); }
+}
+function renderSrvLib() {
+  const body = $('#libBody');
+  srvLib.sort((a, b) => (b.at || 0) - (a.at || 0));
+  $('#libCount').textContent = srvLib.length ? `${srvLib.length} ${srvLib.length === 1 ? 'song' : 'songs'} · ${fmtSize(srvLib.reduce((a, t) => a + (t.size || 0), 0))}` : '';
+  $('#emptyLib').hidden = !!srvLib.length;
+  $('#libTable').style.display = srvLib.length ? '' : 'none';
+  body.innerHTML = srvLib.map(t => `<tr>
+    <td style="width:52px">${t.hasArt
+      ? `<img src="/api/art/${t.id}?t=${encodeURIComponent(Auth.token)}" onerror="this.style.visibility='hidden'">`
+      : `<img src="${gradientFor(t.title || t.name, 80)}">`}</td>
+    <td><div class="t1">${esc(t.title || t.name)}</div><div class="t2">${esc(t.artist || 'Unknown artist')}</div></td>
+    <td class="num">${esc(t.album || '—')}</td>
+    <td class="num">${t.duration ? fmtTime(t.duration) : '—'}</td>
+    <td class="num">${fmtSize(t.size || 0)}</td>
+    <td style="width:44px"><button class="del" data-del="${t.id}" title="Delete from server"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg></button></td>
+  </tr>`).join('');
+}
+$('#libBody').addEventListener('click', async (e) => {
+  const b = e.target.closest('[data-del]');
+  if (!b) return;
+  await api('/api/file/' + b.dataset.del, { method: 'DELETE' });
+  srvLib = srvLib.filter(t => t.id !== b.dataset.del);
+  renderSrvLib();
+  toast('Deleted from server');
+});
+$('#btnRefresh').addEventListener('click', loadSrvLib);
+let clearArmed = false;
+$('#btnClear').addEventListener('click', async () => {
+  if (!clearArmed) { clearArmed = true; $('#btnClear').textContent = 'Click again to clear'; setTimeout(() => { clearArmed = false; $('#btnClear').textContent = 'Clear server'; }, 3500); return; }
+  clearArmed = false; $('#btnClear').textContent = 'Clear server';
+  await api('/api/clear', { method: 'POST' });
+  srvLib = []; renderSrvLib();
+  toast('Server cleared — phones keep their copies');
+});
+
+/* uploads use XHR because fetch has no upload-progress events */
+const AUDIO_HINT = /\.(mp3|m4a|aac|flac|wav|ogg|oga|opus|webm|mp4|m4b|wma|aiff?|ape|mka|mkv|mov|3gp|amr|f\d{2,3})$/i;
+$('#btnFiles').addEventListener('click', () => $('#fIn').click());
+$('#btnFolder').addEventListener('click', () => $('#dIn').click());
+$('#drop').addEventListener('click', (e) => { if (!e.target.closest('button')) $('#fIn').click(); });
+$('#fIn').addEventListener('change', (e) => { enqueue([...e.target.files]); e.target.value = ''; });
+$('#dIn').addEventListener('change', (e) => { enqueue([...e.target.files].filter(f => AUDIO_HINT.test(f.name) || (f.type || '').match(/^(audio|video)/))); e.target.value = ''; });
+['dragover', 'dragenter'].forEach(ev => $('#drop').addEventListener(ev, (e) => { e.preventDefault(); $('#drop').classList.add('over'); }));
+['dragleave', 'drop'].forEach(ev => $('#drop').addEventListener(ev, (e) => { e.preventDefault(); $('#drop').classList.remove('over'); }));
+$('#drop').addEventListener('drop', (e) => enqueue([...e.dataTransfer.files]));
+
+const upQ = [];
+let uploading = 0;
+function enqueue(files) {
+  if (!files.length) return;
+  const have = new Set(srvLib.map(t => t.name + '::' + t.size));
+  for (const f of files) {
+    const dup = have.has(f.name + '::' + f.size);
+    const row = document.createElement('div');
+    row.className = 'qrow';
+    row.innerHTML = `<span class="nm">${esc(f.name)}</span><span class="sz">${fmtSize(f.size)}</span>
+      <div class="qbar"><i></i></div><span class="st">${dup ? 'already there' : 'waiting'}</span>`;
+    $('#queue').classList.add('on');
+    $('#queue').appendChild(row);
+    if (dup) { row.querySelector('.st').className = 'st dup'; continue; }
+    upQ.push({ f, row });
+  }
+  pump();
+}
+function pump() { while (uploading < 2 && upQ.length) uploadOne(upQ.shift()); }
+function uploadOne({ f, row }) {
+  uploading++;
+  const st = row.querySelector('.st'), bar = row.querySelector('.qbar i');
+  st.textContent = 'uploading';
+  const xhr = new XMLHttpRequest();
+  xhr.open('POST', '/api/upload');
+  xhr.setRequestHeader('X-Token', Auth.token);
+  xhr.upload.onprogress = (e) => { if (e.lengthComputable) bar.style.width = (e.loaded / e.total * 100) + '%'; };
+  xhr.onload = () => {
+    uploading--;
+    if (xhr.status === 200) {
+      st.textContent = 'done'; st.className = 'st ok'; bar.style.width = '100%';
+      try { const t = JSON.parse(xhr.responseText).track; if (t) { srvLib = srvLib.filter(x => x.id !== t.id); srvLib.push(t); renderSrvLib(); } } catch {}
+    } else if (xhr.status === 401) { st.textContent = 'logged out'; st.className = 'st err'; showGate(); }
+    else { st.textContent = 'failed'; st.className = 'st err'; }
+    pump();
+    if (!uploading && !upQ.length) toast('All uploads done — hit Sync on your phone 📱');
+  };
+  xhr.onerror = () => { uploading--; st.textContent = 'failed'; st.className = 'st err'; pump(); };
+  const fd = new FormData();
+  fd.append('file', f, f.name);
+  xhr.send(fd);
+}
+
 /* debug/testing handle */
-window.VB = { state: S, audio, Sync, importFiles, syncNow, checkServer, playFromList, togglePlay, next, prev, deleteTrack, db, Auth };
+window.VB = { state: S, audio, Sync, importFiles, syncNow, checkServer, playFromList, togglePlay, next, prev, deleteTrack, db, Auth, applyMode, loadSrvLib, enqueue, get Mode() { return Mode; }, get srvLib() { return srvLib; } };
 </script>
 </body>
 </html>
