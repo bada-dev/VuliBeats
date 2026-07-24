@@ -1,0 +1,15 @@
+{
+  "name": "VuliBeats",
+  "short_name": "VuliBeats",
+  "description": "Your music. Everywhere. Offline.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#07070d",
+  "theme_color": "#07070d",
+  "icons": [
+    { "src": "/static/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "/static/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
+  ]
+}
